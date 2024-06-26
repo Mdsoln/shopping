@@ -14,7 +14,7 @@ public interface UserRepo extends JpaRepository<Customer,Long> {
 
     Customer findByMobile(String mobile);
 
-    @Query("SELECT u.name, u.email, u.mobile, u.enrollNumber, u.date_created " +
+    @Query("SELECT u.name, u.email, u.mobile, u.enrollNumber, u.date_created, u.role " +
             "FROM Customer u " +
             "ORDER BY u.date_created "
     )
