@@ -2,7 +2,6 @@ package onlineshopping.service.base;
 
 import onlineshopping.entity.Order;
 import onlineshopping.model.CartItem;
-import onlineshopping.model.PaymentRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 

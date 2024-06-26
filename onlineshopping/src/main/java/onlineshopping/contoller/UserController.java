@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import onlineshopping.entity.Order;
 import onlineshopping.model.*;
 import onlineshopping.pay.PaymentFacade;
+import onlineshopping.service.impl.AuthService;
 import onlineshopping.service.impl.OrderServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +19,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final OrderServiceImpl userService;
+    private final OrderServiceImpl orderService;
     private final PaymentFacade paymentFacade;
+    private final AuthService authService;
 
     @CrossOrigin()
     @PostMapping("/cart/checkout")
@@ -38,7 +40,7 @@ public class UserController {
 
         for (CartItem item : orderRequest.getCartItems()) {
             try {
-               Order order= userService.processOrder(orderRequest.getEmail(), orderRequest.getStreet(), orderRequest.getRegion(), item).getBody();
+               Order order= orderService.processOrder(orderRequest.getEmail(), orderRequest.getStreet(), orderRequest.getRegion(), item).getBody();
                 assert order != null;
                 response.setOrderNo(order.getOrderNo());
                 response.setCustomerEmail(order.getCustomer().getEmail());
@@ -70,7 +72,7 @@ public class UserController {
             @RequestParam(name = "description", required = false) String description,
             @RequestParam(name = "imageUrl", required = false) MultipartFile imageUrl
             ){
-        return userService.publishItem(
+        return orderService.publishItem(
                 itemName,sizes,colors,
                 stokeQuantity,actualPrice,discountPrice,description,imageUrl
         );
@@ -83,4 +85,11 @@ public class UserController {
        return ResponseEntity.ok(paymentFacade.pay(paymentRequest));
     }
 
+
+    //find specific user with the provided enrollmentID
+    @CrossOrigin()
+    @GetMapping("/{enrollmentID}")
+    public ResponseEntity<UserResponse> getUser(@PathVariable("enrollmentID") String enrollmentID){
+        return authService.getUser(enrollmentID);
+    }
 }

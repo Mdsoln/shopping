@@ -12,6 +12,7 @@ import onlineshopping.jwt.service.JwtService;
 import onlineshopping.model.AuthRequest;
 import onlineshopping.model.AuthResponse;
 import onlineshopping.model.UserDto;
+import onlineshopping.model.UserResponse;
 import onlineshopping.notification.model.LoginRequest;
 import onlineshopping.notification.service.BeemOtpService;
 import onlineshopping.repo.OtpCodeRepo;
@@ -97,7 +98,7 @@ public class AuthService implements BaseService {
     }
 
     public static String generateUniqueNumber() {
-        int orderNumberLength = 5;
+        int orderNumberLength = 15;
         StringBuilder builder = new StringBuilder();
 
         Random random = new Random();
@@ -105,7 +106,7 @@ public class AuthService implements BaseService {
             int digit = random.nextInt(10);
             builder.append(digit);
         }
-        return "S/N-"+builder;
+        return "222"+builder;
     }
 
     @Override
@@ -206,6 +207,26 @@ public class AuthService implements BaseService {
 
         } catch (Exception exception){
             throw new HandleExceptions(exception.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<UserResponse> getUser(String enrollmentID) {
+        try {
+            Customer customer = userRepo.findByEnrollmentNumber(enrollmentID)
+                    .orElseThrow(()-> new SearchExceptions("User not found"));
+
+            UserResponse response = new UserResponse();
+            response.setName(customer.getName());
+            response.setEmail(customer.getEmail());
+            response.setMobile(customer.getMobile());
+            response.setRoles(String.valueOf(customer.getRole()));
+            response.setUserID(customer.getEnrollNumber());
+
+            return ResponseEntity.ok(response);
+
+        }catch (SearchExceptions exceptions){
+            throw new SearchExceptions("Error: "+exceptions.getMessage());
         }
     }
 

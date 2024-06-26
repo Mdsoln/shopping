@@ -3,6 +3,7 @@ package onlineshopping.service.base;
 import onlineshopping.model.AuthRequest;
 import onlineshopping.model.AuthResponse;
 import onlineshopping.model.UserDto;
+import onlineshopping.model.UserResponse;
 import onlineshopping.notification.model.LoginRequest;
 import org.springframework.http.ResponseEntity;
 
@@ -15,5 +16,6 @@ public interface BaseService {
 
     ResponseEntity<AuthResponse> resendOtpCodes(String phoneNumber, String oldOtpCodes);
 
+    ResponseEntity<UserResponse> getUser(String enrollmentID);
 }
 
