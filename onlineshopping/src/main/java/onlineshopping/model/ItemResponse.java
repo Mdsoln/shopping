@@ -18,4 +18,5 @@ public class ItemResponse {
     private String imageUrl;
     private List<String> sizes;
     private List<String> colors;
+    private List<String> categories;
 }

@@ -19,6 +19,7 @@ public interface ItemRepo extends JpaRepository<Item, Long> {
     @Query("SELECT i FROM Item i " +
             "LEFT JOIN i.sizes s " +
             "LEFT JOIN i.colors c " +
+            "LEFT JOIN i.category ca " +
             "ORDER BY i.itemName")
     List<Item> findAllItem();
 

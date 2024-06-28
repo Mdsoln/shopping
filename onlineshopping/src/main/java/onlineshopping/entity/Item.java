@@ -67,8 +67,10 @@ public class Item {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime datePublished;
 
-    @Enumerated(EnumType.STRING)
-    private Categories category;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "item_categories", joinColumns = @JoinColumn(name = "item_id"))
+    @Column(name = "size")
+    private List<String> category;
 
     @PrePersist
     public void onCreate(){

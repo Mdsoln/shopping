@@ -56,6 +56,7 @@ public class SearchController {
                         .imageUrl(queryItem.getImageUrl())
                         .sizes(queryItem.getSizes())
                         .colors(queryItem.getColors())
+                        .categories(queryItem.getCategory())
                         .build();
                 return ResponseEntity.ok(itemResponse);
             }else {
