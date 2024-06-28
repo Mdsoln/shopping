@@ -117,7 +117,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    public String storeImages(MultipartFile imageUrl) throws IOException {
+    public static  String storeImages(MultipartFile imageUrl) throws IOException {
         if (imageUrl == null || imageUrl.isEmpty()) {
             throw new IllegalArgumentException("Image file is null or empty");
         }

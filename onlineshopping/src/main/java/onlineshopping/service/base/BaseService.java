@@ -6,6 +6,9 @@ import onlineshopping.model.UserDto;
 import onlineshopping.model.UserResponse;
 import onlineshopping.notification.model.LoginRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 public interface BaseService {
     ResponseEntity<AuthResponse> createAccount(UserDto userDto);
@@ -17,5 +20,7 @@ public interface BaseService {
     ResponseEntity<AuthResponse> resendOtpCodes(String phoneNumber, String oldOtpCodes);
 
     ResponseEntity<UserResponse> getUser(String enrollmentID);
+
+    ResponseEntity<String> updateProfile(String enrollmentID, MultipartFile profile) throws IOException;
 }
 

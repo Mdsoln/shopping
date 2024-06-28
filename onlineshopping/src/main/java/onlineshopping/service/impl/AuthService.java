@@ -25,7 +25,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Random;
 
@@ -228,6 +230,22 @@ public class AuthService implements BaseService {
         }catch (SearchExceptions exceptions){
             throw new SearchExceptions("Error: "+exceptions.getMessage());
         }
+    }
+
+    @Override
+    public ResponseEntity<String> updateProfile(String enrollmentID, MultipartFile profile) throws IOException {
+        try {
+            Customer customer = userRepo.findByEnrollmentNumber(enrollmentID)
+                    .orElseThrow(()-> new SearchExceptions("User not found"));
+
+            String profileName = OrderServiceImpl.storeImages(profile);
+
+            customer.setImage(profileName);
+            return ResponseEntity.ok("upload successfully");
+        }catch (SearchExceptions exceptions){
+            throw new SearchExceptions("Error: "+exceptions.getMessage());
+        }
+
     }
 
     private boolean isOtpExpired(Customer customer, String providedOtp) {

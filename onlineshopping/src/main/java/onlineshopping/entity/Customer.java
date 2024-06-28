@@ -39,6 +39,8 @@ public class Customer implements UserDetails {
     private String password;
     private String enrollNumber;
 
+    private String image;
+
     @OneToOne(mappedBy = "customer", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private Otp otp;
 

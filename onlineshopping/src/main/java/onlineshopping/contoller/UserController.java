@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -92,5 +93,14 @@ public class UserController {
     @GetMapping("/{enrollmentID}")
     public ResponseEntity<UserResponse> getUser(@PathVariable("enrollmentID") String enrollmentID){
         return authService.getUser(enrollmentID);
+    }
+
+    @CrossOrigin()
+    @PostMapping("/profile")
+    public ResponseEntity<String> updateProfile(
+            @RequestParam(name = "enrollmentID", required = false) String enrollmentID,
+            @RequestParam(name = "profile", required = false) MultipartFile profile
+    ) throws IOException {
+        return authService.updateProfile(enrollmentID, profile);
     }
 }
