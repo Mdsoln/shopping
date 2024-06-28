@@ -1,6 +1,7 @@
 package onlineshopping.jwt.config;
 
 import lombok.RequiredArgsConstructor;
+import onlineshopping.entity.Customer;
 import onlineshopping.repo.UserRepo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,8 +10,11 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.ArrayList;
 
 @Configuration
 @RequiredArgsConstructor
@@ -23,8 +27,14 @@ public class JwtConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(){
-        return userRepo::findByEmail;
+    public UserDetailsService userDetailsService() {
+        return email -> {
+            Customer user = userRepo.findByEmail(email);
+            if (user == null) {
+                throw new UsernameNotFoundException("User not found with email: " + email);
+            }
+            return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), new ArrayList<>());
+        };
     }
 
     @Bean
