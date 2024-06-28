@@ -1,6 +1,7 @@
 package onlineshopping.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import onlineshopping.constants.Categories;
 import onlineshopping.constants.Status;
 import onlineshopping.entity.*;
 import onlineshopping.exc.HandleExceptions;
@@ -84,11 +85,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<String> publishItem(String itemName, List<String> sizes, List<String> colors, int stokeQuantity, float actualPrice, float discountPrice, String description, MultipartFile imageUrl) {
+    public ResponseEntity<String> publishItem(String itemName, List<String> sizes, List<String> colors, int stokeQuantity, float actualPrice, float discountPrice, String description, MultipartFile imageUrl, String category) {
             try {
                 String item_no = generateRandomAlphanumericItemNo();
 
-                Item item = getItem(itemName,sizes,colors,stokeQuantity,actualPrice,discountPrice,description,imageUrl, item_no);
+                Item item = getItem(itemName,sizes,colors,stokeQuantity,actualPrice,discountPrice,description,imageUrl, item_no, category);
 
                 itemRepo.save(item);
                 return ResponseEntity.ok("publishing successfully");
@@ -100,7 +101,7 @@ public class OrderServiceImpl implements OrderService {
             }
     }
 
-    private Item getItem(String itemName, List<String> sizes, List<String> colors, int stokeQuantity, float actualPrice, float discountPrice, String description, MultipartFile imageUrl, String itemNo) throws IOException {
+    private Item getItem(String itemName, List<String> sizes, List<String> colors, int stokeQuantity, float actualPrice, float discountPrice, String description, MultipartFile imageUrl, String itemNo, String category) throws IOException {
         Item item = new Item();
         item.setItemNo(itemNo);
         item.setItemName(itemName);
@@ -112,6 +113,22 @@ public class OrderServiceImpl implements OrderService {
         item.setRatings(0);// Default each product/item has 0 ratings
         item.setColors(colors);
         item.setSizes(sizes);
+        if (category.equalsIgnoreCase("women")){
+            item.setCategory(Categories.women);
+        } else if (category.equalsIgnoreCase("men")) {
+            item.setCategory(Categories.men);
+        } else if (category.equalsIgnoreCase("furniture")) {
+            item.setCategory(Categories.furniture);
+        } else if (category.equalsIgnoreCase("fashion")) {
+            item.setCategory(Categories.fashion);
+        } else if (category.equalsIgnoreCase("cosmetics")) {
+            item.setCategory(Categories.cosmetics);
+        }else if (category.equalsIgnoreCase("electronics")) {
+            item.setCategory(Categories.electronics);
+        } else if (category.equalsIgnoreCase("child")) {
+            item.setCategory(Categories.child);
+        }
+
         return item;
     }
 

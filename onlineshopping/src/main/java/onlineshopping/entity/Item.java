@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import onlineshopping.constants.Categories;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -65,6 +66,9 @@ public class Item {
 
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime datePublished;
+
+    @Enumerated(EnumType.STRING)
+    private Categories category;
 
     @PrePersist
     public void onCreate(){
