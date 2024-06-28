@@ -239,8 +239,13 @@ public class AuthService implements BaseService {
                     .orElseThrow(()-> new SearchExceptions("User not found"));
 
             String profileName = OrderServiceImpl.storeImages(profile);
+            if (profileName.isEmpty()){
+                throw new HandleExceptions("No image set, please try again");
+            }
 
             customer.setImage(profileName);
+            userRepo.save(customer);
+
             return ResponseEntity.ok("upload successfully");
         }catch (SearchExceptions exceptions){
             throw new SearchExceptions("Error: "+exceptions.getMessage());
