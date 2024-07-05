@@ -122,7 +122,7 @@ public class OrderServiceImpl implements OrderService {
             throw new IllegalArgumentException("Image file is null or empty");
         }
 
-        String uploadDirectory = "onlineshopping/src/main/resources/static/images";
+        String uploadDirectory = "/home/muddy/shopping/onlineshopping/src/main/resources/static/images";
         String imageName = StringUtils.cleanPath(Objects.requireNonNull(imageUrl.getOriginalFilename()));
 
         if (imageName.contains("..")) {
