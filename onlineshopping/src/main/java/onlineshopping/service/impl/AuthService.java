@@ -58,8 +58,7 @@ public class AuthService implements BaseService {
             customer.setEmail(userDto.getEmail());
             customer.setMobile(userDto.getMobile());
             customer.setPassword(passwordEncoder.encode(userDto.getPassword()));
-            if (userDto.getRole() != null && (userDto.getRole().equalsIgnoreCase("manufacturer") ||
-                            userDto.getRole().equalsIgnoreCase("sale"))) {
+            if (userDto.getRole() != null && (userDto.getRole().equalsIgnoreCase("entrepreneur"))) {
                 customer.setRole(UserRole.ENTREPRENEUR);
             } else {
                 customer.setRole(UserRole.CUSTOMER);
