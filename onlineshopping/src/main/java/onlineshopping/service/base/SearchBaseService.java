@@ -33,4 +33,6 @@ public interface SearchBaseService {
     List<SalesPerMonthDTO> getSalesPerMonth();
 
     ResponseEntity<String> confirmOrder(String orderNo);
+
+    ResponseEntity<String> cancelOrder(String orderNo);
 }

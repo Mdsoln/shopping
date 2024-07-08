@@ -6,6 +6,7 @@ import onlineshopping.model.*;
 import onlineshopping.pay.PaymentFacade;
 import onlineshopping.service.impl.AuthService;
 import onlineshopping.service.impl.OrderServiceImpl;
+import onlineshopping.service.impl.SearchServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +24,7 @@ public class UserController {
     private final OrderServiceImpl orderService;
     private final PaymentFacade paymentFacade;
     private final AuthService authService;
+    private final SearchServiceImpl searchService;
 
     @CrossOrigin()
     @PostMapping("/cart/checkout")
@@ -102,5 +104,13 @@ public class UserController {
             @RequestParam(name = "profile", required = false) MultipartFile profile
     ) throws IOException {
         return authService.updateProfile(enrollmentID, profile);
+    }
+
+    @CrossOrigin()
+    @PostMapping("/cancel-order")
+    public ResponseEntity<String> cancelOrder(
+            @RequestParam(name = "orderNo", required = false) String orderNo
+    ){
+        return searchService.cancelOrder(orderNo);
     }
 }

@@ -179,6 +179,33 @@ public class SearchServiceImpl implements SearchBaseService {
         }
     }
 
+    @Override
+    public ResponseEntity<String> cancelOrder(String orderNo) {
+        try {
+            Order order = orderRepo.findByOrderNo(orderNo);
+            if (order == null){
+                throw new SearchExceptions("Oops!!! No order matches");
+            }
+
+            OrderStatus status = order.getOrderStatus();
+            if (status == null) {
+                throw new SearchExceptions("Oops!!! No order status found for the order");
+            }
+
+            status.setOrder_status(Status.canceled.name());
+            status.setDate_updated(LocalDateTime.now().withNano(0));
+
+            order.setDate_updated(LocalDateTime.now().withNano(0));
+
+            statusRepo.save(status);
+            orderRepo.save(order);
+
+            return ResponseEntity.ok("Order confirmed successfully");
+        }catch (SearchExceptions exceptions){
+            throw new SearchExceptions("Error: "+exceptions.getMessage());
+        }
+    }
+
 
     public ResponseEntity<String> getImagePath(String imageName){
         Optional<String> image_path = itemRepo.findByImageUrl(imageName);
