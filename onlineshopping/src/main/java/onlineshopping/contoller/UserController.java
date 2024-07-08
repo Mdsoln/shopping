@@ -90,7 +90,7 @@ public class UserController {
     }
 
 
-    //find specific user with the provided enrollmentID
+    //find a specific user with the provided enrollmentID
     @CrossOrigin()
     @GetMapping("/{enrollmentID}")
     public ResponseEntity<UserResponse> getUser(@PathVariable("enrollmentID") String enrollmentID){
@@ -106,6 +106,14 @@ public class UserController {
         return authService.updateProfile(enrollmentID, profile);
     }
 
+    @CrossOrigin()
+    @PostMapping("/forget-password")
+    public ResponseEntity<String> updateProfile(
+            @RequestParam(name = "email") String email,
+            @RequestParam(name = "password", required = false) String newPassword
+    ){
+        return authService.updateProfile(email,newPassword);
+    }
     @CrossOrigin()
     @PostMapping("/cancel-order")
     public ResponseEntity<String> cancelOrder(
