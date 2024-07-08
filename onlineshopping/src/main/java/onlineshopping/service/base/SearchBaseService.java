@@ -31,4 +31,6 @@ public interface SearchBaseService {
     Page<Object[]> findProducts(Pageable pageable);
 
     List<SalesPerMonthDTO> getSalesPerMonth();
+
+    ResponseEntity<String> confirmOrder(String orderNo);
 }

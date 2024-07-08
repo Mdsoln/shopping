@@ -154,6 +154,14 @@ public class AdminController {
         List<SalesPerMonthDTO> salesPerMonthList = searchService.getSalesPerMonth();
         return ResponseEntity.ok(salesPerMonthList);
     }
+
+    @CrossOrigin()
+    @PostMapping("/confirm-order")
+    public ResponseEntity<String> confirmationOrder(
+            @RequestParam(name = "orderNo", required = false) String orderNo
+    ){
+        return searchService.confirmOrder(orderNo);
+    }
 }
 //payment details: customer name, payment schedule, Bill number, Amount paid, balance amount, date
 //sales for month
