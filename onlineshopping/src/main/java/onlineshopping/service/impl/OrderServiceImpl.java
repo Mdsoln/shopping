@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import onlineshopping.constants.Status;
 import onlineshopping.entity.*;
 import onlineshopping.exc.HandleExceptions;
+import onlineshopping.exc.SearchExceptions;
 import onlineshopping.model.CartItem;
 import onlineshopping.repo.*;
 import onlineshopping.service.base.OrderService;
@@ -35,16 +36,24 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public ResponseEntity<Order> processOrder(String email, String street, String region, CartItem item) {
+    public ResponseEntity<String> processOrder(String email, String street, String region, CartItem item) {
         try {
-
+            // Fetch customer
             Customer customer = userRepo.findByEmail(email);
             if (customer == null) {
                 throw new HandleExceptions("Oops! you need to have an account");
             }
+
+            // Fetch item
             Item items = itemRepo.findByItemNo(item.getItemNo());
+            if (items == null) {
+                throw new SearchExceptions("Invalid item number: " + item.getItemNo());
+            }
+
+            // Calculate total price
             double totalPrice = getTotalPrice(item, items);
 
+            // Create and save order
             Order order = new Order();
             order.setOrderNo(generateRandomOrderNumber());
             order.setAddress(street + " " + region);
@@ -52,20 +61,39 @@ public class OrderServiceImpl implements OrderService {
             order.setTotalPrice(totalPrice);
             orderRepo.save(order);
 
+            // Create and save order status
             OrderStatus orderStatus = new OrderStatus();
             orderStatus.setOrder_status(Status.ongoing.name());
             orderStatus.setOrder(order);
             statusRepo.save(orderStatus);
 
-            saveOrderItem(order, item.getItemNo(), item.getProductQuantity(), item.getColors(), item.getSizes());
+            // Check and update item stock
+            int newQuantity = items.getCurrentQuantity() - item.getProductQuantity();
+            if (newQuantity < 0) {
+                throw new HandleExceptions("Insufficient stock for item number: " + item.getItemNo());
+            }
 
-            return ResponseEntity.ok(order);
-        } catch (HandleExceptions exception) {
-            return ResponseEntity.badRequest().body(null);
+            items.setCurrentQuantity(newQuantity);
+            itemRepo.save(items);
+
+            // Create and save order item
+            OrderItem orderItem = new OrderItem();
+            orderItem.setItem(items);
+            orderItem.setQuantity(item.getProductQuantity());
+            orderItem.setSizes(item.getSizes());
+            orderItem.setColors(item.getColors());
+            orderItem.setOrder(order);
+            orderItemRepo.save(orderItem);
+
+            return ResponseEntity.ok(order.getOrderNo());
+
+        } catch (HandleExceptions | SearchExceptions exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
         } catch (Exception exception) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
         }
     }
+
 
     private static double getTotalPrice(CartItem item, Item items) {
         if (items == null) {
@@ -113,6 +141,7 @@ public class OrderServiceImpl implements OrderService {
         item.setColors(colors);
         item.setSizes(sizes);
         item.setCategory(category);
+        item.setCurrentQuantity(stokeQuantity);
         return item;
     }
 
@@ -139,11 +168,21 @@ public class OrderServiceImpl implements OrderService {
 
         return imageName;
     }
+/*
 
 
     private void saveOrderItem(Order order, String itemNo, int productQuantity, List<String> sizes, List<String> colors) {
         Item item = itemRepo.findByItemNo(itemNo);
         if (item != null) {
+            int newQuantity = item.getCurrentQuantity() - productQuantity;
+            // Check if stock is enough
+            if (newQuantity < 0) {
+                throw new HandleExceptions("Insufficient stock for item number: " + itemNo);
+            }
+
+            item.setCurrentQuantity(newQuantity);
+            itemRepo.save(item);
+
             OrderItem orderItem = new OrderItem();
             orderItem.setItem(item);
             orderItem.setQuantity(productQuantity);
@@ -152,12 +191,11 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setOrder(order);
             orderItemRepo.save(orderItem);
 
-            item.setCurrentQuantity(item.getInitialQuantity() - productQuantity);
-            itemRepo.save(item);
         } else {
             throw new HandleExceptions("Oops! invalid or not exist item number");
         }
     }
+*/
 
 
     private String generateRandomOrderNumber(){
