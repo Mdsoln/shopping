@@ -1,7 +1,6 @@
 package onlineshopping.contoller;
 
 import lombok.RequiredArgsConstructor;
-import onlineshopping.entity.Order;
 import onlineshopping.model.*;
 import onlineshopping.pay.PaymentFacade;
 import onlineshopping.service.impl.AuthService;
@@ -28,9 +27,7 @@ public class UserController {
 
     @CrossOrigin()
     @PostMapping("/cart/checkout")
-    public ResponseEntity<OrderResponse> placeOrder(
-            @RequestBody OrderRequest orderRequest
-    ) {
+    public ResponseEntity<OrderResponse> placeOrder(@RequestBody OrderRequest orderRequest) {
         OrderResponse response = new OrderResponse();
 
         if (orderRequest.getEmail().isEmpty() || orderRequest.getStreet().isEmpty() || orderRequest.getRegion().isEmpty()) {
@@ -43,14 +40,21 @@ public class UserController {
 
         for (CartItem item : orderRequest.getCartItems()) {
             try {
-               Order order= orderService.processOrder(orderRequest.getEmail(), orderRequest.getStreet(), orderRequest.getRegion(), item).getBody();
-                assert order != null;
-                response.setOrderNo(order.getOrderNo());
-                response.setCustomerEmail(order.getCustomer().getEmail());
-                response.setBilling_address(order.getAddress());
+                ResponseEntity<String> result = orderService.processOrder(orderRequest.getEmail(), orderRequest.getStreet(), orderRequest.getRegion(), item);
+                if (result.getStatusCode().is2xxSuccessful()) {
+                    String successMessage = result.getBody();
+                    response.setSuccessful(true);
+                    response.setOrderNo(successMessage);
+                    response.setCustomerEmail(orderRequest.getEmail());
+                    response.setBilling_address(orderRequest.getStreet() + " " + orderRequest.getRegion());
+                } else {
+                    response.setSuccessful(false);
+                    String itemErrorMessage = String.format("Failed to process item %s: %s", item.getItemNo(), result.getBody());
+                    response.setErrorMessage((response.getErrorMessage() == null ? "" : response.getErrorMessage() + "\n") + itemErrorMessage);
+                }
             } catch (Exception e) {
                 response.setSuccessful(false);
-                String itemErrorMessage = String.format("Failed to process item %s: %s", item.getItemNo(), e.getMessage());
+                String itemErrorMessage = String.format("Failed to process item %s: An unexpected error occurred.", item.getItemNo());
                 response.setErrorMessage((response.getErrorMessage() == null ? "" : response.getErrorMessage() + "\n") + itemErrorMessage);
             }
         }

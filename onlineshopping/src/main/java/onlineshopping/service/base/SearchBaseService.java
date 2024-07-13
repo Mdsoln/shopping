@@ -32,7 +32,7 @@ public interface SearchBaseService {
 
     List<SalesPerMonthDTO> getSalesPerMonth();
 
-    ResponseEntity<String> confirmOrder(String orderNo);
+    ResponseEntity<String> processOrderStatus(String orderNo, String orderStatus);
 
     ResponseEntity<String> cancelOrder(String orderNo);
 }

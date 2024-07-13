@@ -152,8 +152,9 @@ public class SearchServiceImpl implements SearchBaseService {
             return salesPerMonthList;
     }
 
+
     @Override
-    public ResponseEntity<String> confirmOrder(String orderNo) {
+    public ResponseEntity<String> processOrderStatus(String orderNo, String orderStatus) {
         try {
             Order order = orderRepo.findByOrderNo(orderNo);
             if (order == null){
@@ -165,9 +166,34 @@ public class SearchServiceImpl implements SearchBaseService {
                 throw new SearchExceptions("Oops!!! No order status found for the order");
             }
 
-            status.setOrder_status(Status.completed.name());
-            status.setDate_updated(LocalDateTime.now().withNano(0));
+            Status newStatus;
+            try {
+                newStatus = Status.valueOf(orderStatus);
+            } catch (IllegalArgumentException e) {
+                throw new SearchExceptions("Invalid order status: " + orderStatus);
+            }
 
+            switch (newStatus) {
+                case completed:
+                    status.setOrder_status(Status.completed.name());
+                    break;
+                case canceled:
+                    status.setOrder_status(Status.canceled.name());
+                    break;
+                case processing:
+                    status.setOrder_status(Status.processing.name());
+                    break;
+                case shipped:
+                    status.setOrder_status(Status.shipped.name());
+                    break;
+                case delivered:
+                    status.setOrder_status(Status.delivered.name());
+                    break;
+                default:
+                    throw new SearchExceptions("Unhandled order status: " + newStatus);
+            }
+
+            status.setDate_updated(LocalDateTime.now().withNano(0));
             order.setDate_updated(LocalDateTime.now().withNano(0));
 
             statusRepo.save(status);
