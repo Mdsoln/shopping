@@ -78,11 +78,12 @@ public class UserController {
             @RequestParam(name = "discountPrice", required = false) float discountPrice,
             @RequestParam(name = "description", required = false) String description,
             @RequestParam(name = "imageUrl", required = false) MultipartFile imageUrl,
-            @RequestParam(name = "category", required = false) List<String> category
+            @RequestParam(name = "category", required = false) List<String> category,
+            @RequestParam(name = "type", required = false) String type
             ){
         return orderService.publishItem(
                 itemName,sizes,colors,
-                stokeQuantity,actualPrice,discountPrice,description,imageUrl,category
+                stokeQuantity,actualPrice,discountPrice,description,imageUrl,category,type
         );
     }
 

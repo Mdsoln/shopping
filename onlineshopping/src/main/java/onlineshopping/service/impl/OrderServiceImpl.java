@@ -112,11 +112,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<String> publishItem(String itemName, List<String> sizes, List<String> colors, int stokeQuantity, float actualPrice, float discountPrice, String description, MultipartFile imageUrl, List<String> category) {
+    public ResponseEntity<String> publishItem(String itemName, List<String> sizes, List<String> colors, int stokeQuantity, float actualPrice, float discountPrice, String description, MultipartFile imageUrl, List<String> category, String type) {
             try {
                 String item_no = generateRandomAlphanumericItemNo();
 
-                Item item = getItem(itemName,sizes,colors,stokeQuantity,actualPrice,discountPrice,description,imageUrl, item_no, category);
+                Item item = getItem(itemName,sizes,colors,stokeQuantity,actualPrice,discountPrice,description,imageUrl, item_no, category, type);
 
                 itemRepo.save(item);
                 return ResponseEntity.ok("publishing successfully");
@@ -128,7 +128,7 @@ public class OrderServiceImpl implements OrderService {
             }
     }
 
-    private Item getItem(String itemName, List<String> sizes, List<String> colors, int stokeQuantity, float actualPrice, float discountPrice, String description, MultipartFile imageUrl, String itemNo, List<String> category) throws IOException {
+    private Item getItem(String itemName, List<String> sizes, List<String> colors, int stokeQuantity, float actualPrice, float discountPrice, String description, MultipartFile imageUrl, String itemNo, List<String> category, String type) throws IOException {
         Item item = new Item();
         item.setItemNo(itemNo);
         item.setItemName(itemName);
@@ -141,6 +141,7 @@ public class OrderServiceImpl implements OrderService {
         item.setColors(colors);
         item.setSizes(sizes);
         item.setCategory(category);
+        item.setType(type);
         item.setCurrentQuantity(stokeQuantity);
         return item;
     }
