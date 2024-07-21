@@ -3,8 +3,8 @@ spring:
     name: onlineshopping
   datasource:
     url: jdbc:postgresql://localhost:5432/shopping
-    username: postgres
-    password: mdsoln
+    username: muddy
+    password: muddy
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
