@@ -143,7 +143,7 @@ public class AdminController {
                     products.getNumberOfElements()
             );
             return ResponseEntity.ok(pageResponse);
-        }catch (DataAccessException accessException){
+        }catch (HandleExceptions | DataAccessException accessException){
             throw new DatabaseAccessException("Error: "+accessException.getMessage());
         }
     }
